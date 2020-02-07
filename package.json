@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "description": "Vitural Sidekick",
   "scripts": {
+    "dev": "ts-node index.ts",
     "lint": "eslint --ext .js,.ts --ignore-path .gitignore . --fix",
+    "build": "tsc -b",
     "test": "jest",
     "commit": "git cz"
   },
@@ -52,6 +54,7 @@
     "jest": "^25.1.0",
     "lint-staged": "^9.3.0",
     "prettier": "^1.18.2",
+    "ts-node": "^8.6.2",
     "typescript": "^3.7.5"
   },
   "config": {
