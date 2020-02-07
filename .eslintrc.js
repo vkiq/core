@@ -37,7 +37,10 @@ module.exports = {
         'plugin:@typescript-eslint/recommended',
         'plugin:@typescript-eslint/eslint-recommended',
         'plugin:@typescript-eslint/recommended-requiring-type-checking'
-      ]
+      ],
+      rules: {
+        'node/no-unsupported-features/es-syntax': 0
+      }
     }
   ]
 }
