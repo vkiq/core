@@ -9,7 +9,7 @@
     "test": "jest",
     "commit": "git cz"
   },
-  "main": "dist/index.ts",
+  "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
@@ -65,7 +65,7 @@
   "dependencies": {
     "@allquire/core": "^0.1.4",
     "cosmiconfig": "^6.0.0",
-    "plugog": "^0.1.0",
+    "plugog": "^0.1.2",
     "socket.io": "^2.3.0"
   }
 }
