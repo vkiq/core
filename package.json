@@ -1,0 +1,61 @@
+{
+  "name": "@vkiq/core",
+  "version": "0.1.0",
+  "description": "Vitural Sidekick",
+  "scripts": {
+    "lint": "eslint --ext .js,.ts --ignore-path .gitignore . --fix",
+    "commit": "git cz"
+  },
+  "main": "dist/index.ts",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vkiq/core.git"
+  },
+  "keywords": [
+    "vkiq",
+    "bili",
+    "bilibili",
+    "bilichat",
+    "blivechat",
+    "bilisc"
+  ],
+  "lint-staged": {
+    "*.{js,ts}": "eslint --ext .js,.ts --fix"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "author": "Il Harper <afanyiyu@hotmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vkiq/core/issues"
+  },
+  "homepage": "https://github.com/vkiq/core#readme",
+  "devDependencies": {
+    "@types/node": "^13.7.0",
+    "@typescript-eslint/eslint-plugin": "^2.19.0",
+    "@typescript-eslint/parser": "^2.19.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.9.0",
+    "eslint-plugin-import": "^2.20.0",
+    "eslint-plugin-node": "^11.0.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "git-cz": "^3.2.1",
+    "husky": "^3.0.9",
+    "jest": "^25.1.0",
+    "lint-staged": "^9.3.0",
+    "prettier": "^1.18.2",
+    "typescript": "^3.7.5"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/git-cz"
+    }
+  }
+}
