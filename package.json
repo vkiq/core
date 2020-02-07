@@ -63,6 +63,7 @@
     }
   },
   "dependencies": {
-    "cosmiconfig": "^6.0.0"
+    "cosmiconfig": "^6.0.0",
+    "socket.io": "^2.3.0"
   }
 }
