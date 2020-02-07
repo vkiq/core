@@ -61,5 +61,8 @@
     "commitizen": {
       "path": "./node_modules/git-cz"
     }
+  },
+  "dependencies": {
+    "cosmiconfig": "^6.0.0"
   }
 }
