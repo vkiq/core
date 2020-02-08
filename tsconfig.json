@@ -10,6 +10,7 @@
     "**/node_modules/*"
   ],
   "include": [
-    "index.ts"
+    "index.ts",
+    "plugin.d.ts"
   ]
 }
