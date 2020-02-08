@@ -1,3 +1,5 @@
+/* eslint-disable no-process-exit, node/no-missing-require */
+
 ;(async () => {
   // Environment Check
   try {

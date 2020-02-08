@@ -6,7 +6,6 @@ module.exports = {
     es2020: true,
     jest: true
   },
-  parser: '@typescript-eslint/parser',
   parserOptions: {
     sourceType: 'module',
     allowImportExportEverywhere: true,
@@ -26,6 +25,7 @@ module.exports = {
   overrides: [
     {
       files: ['*.ts'],
+      parser: '@typescript-eslint/parser',
       plugins: ['prettier', '@typescript-eslint'],
       extends: [
         'prettier',

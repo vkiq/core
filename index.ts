@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires, no-empty */
+
 import * as fs from 'fs';
 import Plugog from 'plugog';
 const { version } = require('./package.json');
