@@ -22,6 +22,6 @@
       process.exit(1)
     })
     console.log('安装完成。感谢使用VkiQ。')
-    require('./index')
   }
+  require('./index')
 })()
