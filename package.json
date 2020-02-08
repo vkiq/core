@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "ts-node index.ts",
     "lint": "eslint --ext .js,.ts --ignore-path .gitignore . --fix",
-    "build": "tsc -b && build",
+    "build:windows": "tsc -b && build",
+    "build:unix": "tsc -b && ./build",
     "test": "jest",
     "commit": "git cz"
   },
