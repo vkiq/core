@@ -19,6 +19,7 @@
 @typescript-eslint/no-use-before-define,
 @typescript-eslint/no-explicit-any */
 
+import { EventEmitter } from 'events';
 import { WriteStream } from 'fs';
 
 declare class PluginLogger {
@@ -65,9 +66,10 @@ declare class PluginLogger {
 }
 
 declare class VkiQPluginOptions {
-  name: string;
   channel: string;
   log: PluginLogger;
+  debug: boolean;
+  dispatch: EventEmitter;
   [K: string]: any;
 }
 
