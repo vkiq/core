@@ -65,7 +65,7 @@
     }
   },
   "dependencies": {
-    "@allquire/core": "^0.1.4",
+    "@allquire/core": "^0.1.5",
     "cosmiconfig": "^6.0.0",
     "envinfo": "^7.5.0",
     "keypress": "^0.2.1",
