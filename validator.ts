@@ -1,3 +1,22 @@
+class VkiqPluginConfig {
+  name: string;
+  channel: string;
+}
+
+class VkiqConfig {
+  public port: number;
+  public host: string;
+  public debug: boolean;
+  public plugins: Array<VkiqConfig>;
+}
+
+const defaultConfig: VkiqConfig = {
+  port: 3000,
+  host: 'localhost',
+  debug: false,
+  plugins: []
+};
+
 /* eslint-disable-next-line */
 const validateConfig = (config: any): string => {
   if (!('port' in config)) return '配置中缺少端口。';
@@ -18,4 +37,4 @@ const validateConfig = (config: any): string => {
   return 'OK';
 };
 
-export { validateConfig };
+export { VkiqConfig, VkiqPluginConfig, defaultConfig, validateConfig };

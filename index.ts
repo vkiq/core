@@ -7,9 +7,11 @@ node/no-missing-import */
 
 import { cosmiconfig } from 'cosmiconfig';
 import * as fs from 'fs';
+import * as http from 'http';
 import Plugog from 'plugog';
+import * as socket from 'socket.io';
 import { cpuStat, formatBytes, formatSecond } from './utils';
-import { validateConfig } from './validator';
+import { defaultConfig, validateConfig, VkiqConfig } from './validator';
 import envinfo = require('envinfo');
 import keypress = require('keypress');
 const { version } = require('./package.json');
@@ -118,7 +120,7 @@ const { version } = require('./package.json');
     process.exit(1);
   };
 
-  let config;
+  let config: VkiqConfig;
   {
     const confResult = await cosmiconfig('vkiq', {
       searchPlaces: [
@@ -131,7 +133,8 @@ const { version } = require('./package.json');
     if (confResult) {
       if (confResult.config) {
         const validateResult = validateConfig(confResult.config);
-        if (validateResult === 'OK') config = confResult.config;
+        if (validateResult === 'OK')
+          config = Object.assign(defaultConfig, confResult.config);
         else {
           log.e(validateResult);
           envNullErr();
@@ -140,8 +143,21 @@ const { version } = require('./package.json');
     } else envNullErr();
   }
 
+  // Debug Info
   const debug = config.debug;
   if (debug) log.w('调试模式已开启。这会大幅降低性能。');
+
+  // Socket Initialize
+  log.i('开始加载网络服务。');
+  const server = http.createServer();
+  const io = socket(server);
+  if (debug)
+    io.on('connection', () => {
+      log.i('建立了新的连接。');
+    });
+  server.listen(config.port, config.host, () => {
+    log.i(`VkiQ 正在 ${config.host} 上的 ${config.port} 端口监听。`);
+  });
 
   // Complete
   log.success('VkiQ 启动完成。');
