@@ -3,7 +3,8 @@
 no-empty,
 no-process-exit,
 import/no-unresolved,
-node/no-missing-import */
+node/no-missing-import,
+@typescript-eslint/no-explicit-any */
 
 import { cosmiconfig } from 'cosmiconfig';
 import * as events from 'events';
@@ -55,8 +56,7 @@ const { version } = require('./package.json');
       }, 5000);
     }
   };
-  /* eslint-disable-next-line */
-  let keypressProc = (ch: any, key: any): void => {
+  const keypressProc = (ch: any, key: any): void => {
     if (!key || !('name' in key) || key.meta || key.ctrl || key.shift) return;
     switch (key.name) {
       case 'u': {
@@ -65,7 +65,7 @@ const { version } = require('./package.json');
           log.i(`${new Date().toLocaleString()} 时的使用情况：`);
           log.i(`持续时间：${formatSecond(process.uptime())}`);
           log.i(`CPU 使用：${percent}%`);
-          log.i(`内存使用：${formatBytes(process.memoryUsage().rss)}`);
+          log.i(`内存使用：${formatBytes(process.memoryUsage().heapUsed)}`);
         });
         break;
       }
@@ -103,7 +103,7 @@ const { version } = require('./package.json');
     process.on('warning', (warning) => {
       log.w('警告：');
       log.w(warning.name);
-      log.w(warning.message);
+      for (const msg of warning.message.split('\n')) log.w(msg);
     });
     keypress(process.stdin);
     process.stdin.on('keypress', keypressProc);
@@ -179,8 +179,8 @@ const { version } = require('./package.json');
   // Plugin Initialize
   log.i('开始加载插件。');
   for (const plugin of config.plugins) {
-    if (debug) log.i(`开始加载 ${plugin.name}`);
-    const pluginModule: Function = await allquire(plugin.name);
+    if (debug) log.w(`开始加载 ${plugin.name}`);
+    const pluginModule: any = await allquire(plugin.name);
     const pluginOptions: VkiQPluginOptions = {
       channel: plugin.channel,
       debug,
@@ -188,14 +188,14 @@ const { version } = require('./package.json');
       dispatch,
       address
     };
-    pluginModule(pluginOptions);
+    pluginModule.default(pluginOptions);
   }
   log.i('插件加载完毕。');
 
   // Complete
   log.success('VkiQ 启动完成。');
   log.success('使用 [u] 查看使用情况，[h] 查看帮助。');
-  log.success('使用 Control-C 退出 VkiQ。');
+  log.success('双击 Control-C 退出 VkiQ。');
 
   // Methods Update
   cleanup = (): void => {
