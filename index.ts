@@ -6,12 +6,19 @@ import/no-unresolved,
 node/no-missing-import */
 
 import { cosmiconfig } from 'cosmiconfig';
+import * as events from 'events';
 import * as fs from 'fs';
 import * as http from 'http';
 import Plugog from 'plugog';
 import * as socket from 'socket.io';
+import {
+  defaultConfig,
+  validateConfig,
+  VkiqConfig,
+  VkiQPluginOptions
+} from './definitions';
 import { cpuStat, formatBytes, formatSecond } from './utils';
-import { defaultConfig, validateConfig, VkiqConfig } from './validator';
+import allquire = require('@allquire/core');
 import envinfo = require('envinfo');
 import keypress = require('keypress');
 const { version } = require('./package.json');
@@ -132,9 +139,9 @@ const { version } = require('./package.json');
     }).search();
     if (confResult) {
       if (confResult.config) {
-        const validateResult = validateConfig(confResult.config);
-        if (validateResult === 'OK')
-          config = Object.assign(defaultConfig, confResult.config);
+        const assignConfig = Object.assign(defaultConfig, confResult.config);
+        const validateResult = validateConfig(assignConfig);
+        if (validateResult === 'OK') config = assignConfig;
         else {
           log.e(validateResult);
           envNullErr();
@@ -155,9 +162,30 @@ const { version } = require('./package.json');
     io.on('connection', () => {
       log.i('建立了新的连接。');
     });
+  const address = `http://${config.host}:${config.port}`;
   server.listen(config.port, config.host, () => {
-    log.i(`VkiQ 正在 ${config.host} 上的 ${config.port} 端口监听。`);
+    log.i(`VkiQ 正在 ${address} 上监听。`);
   });
+
+  // Dispatcher Initialize
+  log.i('开始加载事件服务。');
+  const dispatch = new events.EventEmitter();
+
+  // Plugin Initialize
+  log.i('开始加载插件。');
+  for (const plugin of config.plugins) {
+    if (debug) log.i(`开始加载 ${plugin.name}`);
+    const pluginModule: Function = await allquire(plugin.name);
+    const pluginOptions: VkiQPluginOptions = {
+      channel: plugin.channel,
+      debug,
+      log: plugog.addPlugin(plugin.name),
+      dispatch,
+      address
+    };
+    pluginModule(pluginOptions);
+  }
+  log.i('插件加载完毕。');
 
   // Complete
   log.success('VkiQ 启动完成。');
@@ -166,6 +194,11 @@ const { version } = require('./package.json');
 
   // Methods Update
   cleanup = (): void => {
+    let ioClosed = false;
+    io.close(() => {
+      ioClosed = true;
+    });
+    while (!ioClosed) {}
     process.exit(0);
   };
   // keypressProc = (ch: any, key: any): void => {};
