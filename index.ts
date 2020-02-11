@@ -39,8 +39,21 @@ const { version } = require('./package.json');
   process.title = `VkiQ v${version}`;
 
   // Pre-Init Method
+  let processExit = false;
   let cleanup = (): void => {
     process.exit(0);
+  };
+  const signalFunc = function(): void {
+    if (processExit) {
+      log.w('VkiQ 即将退出。');
+      cleanup();
+    } else {
+      log.w('再次按下 Control-C 以退出。');
+      processExit = true;
+      setTimeout(() => {
+        processExit = false;
+      }, 5000);
+    }
   };
   /* eslint-disable-next-line */
   let keypressProc = (ch: any, key: any): void => {
@@ -62,6 +75,10 @@ const { version } = require('./package.json');
         log.i('[h] - 显示此帮助。');
         break;
       }
+      case 'c': {
+        if (key.ctrl) signalFunc();
+        break;
+      }
       default:
         break;
     }
@@ -78,19 +95,7 @@ const { version } = require('./package.json');
       if (code === 0) log.i('结束码：0');
       else log.e('结束码：' + code);
     });
-    let processExit = false;
-    process.on('SIGINT', () => {
-      if (processExit) {
-        log.w('VkiQ 即将退出。');
-        cleanup();
-      } else {
-        log.w('再次按下 Control-C 以退出。');
-        processExit = true;
-        setTimeout(() => {
-          processExit = false;
-        }, 5000);
-      }
-    });
+    process.on('SIGINT', signalFunc);
     process.on('SIGHUP', () => {
       log.e('下次请使用 Control-C 退出。');
       cleanup();
