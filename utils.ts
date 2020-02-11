@@ -52,4 +52,3 @@ const cpuStat = (): Promise<number> =>
   });
 
 export { formatBytes, formatSecond, cpuStat };
-
