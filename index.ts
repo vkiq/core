@@ -56,7 +56,7 @@ const { version } = require('./package.json');
       }, 5000);
     }
   };
-  const keypressProc = async (ch: any, key: any): Promise<void> => {
+  const keypressProc = async (key: any): Promise<void> => {
     if (key.ctrl && key.name === 'c') {
       await signalFunc();
       return;
@@ -109,7 +109,7 @@ const { version } = require('./package.json');
     });
     keypress(process.stdin);
     process.stdin.on('keypress', (ch, key): void => {
-      keypressProc(ch, key);
+      keypressProc(key);
     });
     process.stdin.setRawMode(true);
     process.stdin.resume();
