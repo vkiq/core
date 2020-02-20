@@ -41,13 +41,13 @@ const { version } = require('./package.json');
 
   // Pre-Init Method
   let processExit = false;
-  let cleanup = (): void => {
+  let cleanup = (): Promise<void> => {
     process.exit(0);
   };
-  const signalFunc = function(): void {
+  const signalFunc = async function(): Promise<void> {
     if (processExit) {
-      log.w('VkiQ 即将退出。');
-      cleanup();
+      log.i('VkiQ 即将退出。');
+      await cleanup();
     } else {
       log.w('再次按下 Control-C 以退出。');
       processExit = true;
@@ -56,7 +56,11 @@ const { version } = require('./package.json');
       }, 5000);
     }
   };
-  const keypressProc = (ch: any, key: any): void => {
+  const keypressProc = async (ch: any, key: any): Promise<void> => {
+    if (key.ctrl && key.name === 'c') {
+      await signalFunc();
+      return;
+    }
     if (!key || !('name' in key) || key.meta || key.ctrl || key.shift) return;
     switch (key.name) {
       case 'u': {
@@ -75,10 +79,6 @@ const { version } = require('./package.json');
         log.i('[h] - 显示此帮助。');
         break;
       }
-      case 'c': {
-        if (key.ctrl) signalFunc();
-        break;
-      }
       default:
         break;
     }
@@ -95,7 +95,9 @@ const { version } = require('./package.json');
       if (code === 0) log.i('结束码：0');
       else log.e('结束码：' + code);
     });
-    process.on('SIGINT', signalFunc);
+    process.on('SIGINT', (): void => {
+      signalFunc();
+    });
     process.on('SIGHUP', () => {
       log.e('下次请使用 Control-C 退出。');
       cleanup();
@@ -106,7 +108,9 @@ const { version } = require('./package.json');
       for (const msg of warning.message.split('\n')) log.w(msg);
     });
     keypress(process.stdin);
-    process.stdin.on('keypress', keypressProc);
+    process.stdin.on('keypress', (ch, key): void => {
+      keypressProc(ch, key);
+    });
     process.stdin.setRawMode(true);
     process.stdin.resume();
   }
@@ -116,8 +120,8 @@ const { version } = require('./package.json');
     const envResult = await envinfo.run(
       {
         System: ['OS', 'CPU'],
-        Binaries: ['Node', 'npm'],
-        npmPackages: ['@allquire/core']
+        Binaries: ['Node', 'npm']
+        // npmPackages: ['@allquire/core']
       },
       { showNotFound: true }
     );
@@ -198,12 +202,10 @@ const { version } = require('./package.json');
   log.success('双击 Control-C 退出 VkiQ。');
 
   // Methods Update
-  cleanup = (): void => {
-    let ioClosed = false;
-    io.close(() => {
-      ioClosed = true;
+  cleanup = async (): Promise<void> => {
+    await new Promise((resolve) => {
+      io.close(resolve);
     });
-    while (!ioClosed) {}
     process.exit(0);
   };
   // keypressProc = (ch: any, key: any): void => {};
